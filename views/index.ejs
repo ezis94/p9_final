@@ -1,0 +1,56 @@
+<% include partials/head %>
+
+  <body>
+  <img src="https://spotify-track-self-similarity.glitch.me/image/3JIxjvbbDrA9ztYlNcp3yL" alt="A self-similarity image of a music track"/>
+
+  <div class="col-sm-8 col-sm-offset-2">
+      <div class="jumbotron text-center">
+        <h1>Authentication process</h1>
+        <p class="lead">Som project title</p>
+<div>
+        <a href="/login" class="btn btn-default" style=" display: inline-block;"><span class="fa fa-sign-in"></span> Login</a>
+
+
+
+        <a href="/signup" class="btn btn-default"style=" display: inline-block;"><span class="fa fa-user"></span> Signup</a>
+</div>
+        <!--  <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a>-->
+
+      <!--  <button onclick="ShareFB()">DIMI !!!!</button>-->
+      </div>
+      <script>
+          function ShareFB(){
+
+            window.fbAsyncInit = function () {
+                FB.init({
+                    appId: '200593680707099',
+                    autoLogAppEvents: true,
+                    xfbml: true,
+                    version: 'v2.12'
+                });
+
+                FB.getLoginStatus(function(response) {
+                    if (response.status === 'connected') {
+                        console.log('Logged in.');
+                    }
+                    else {
+                        FB.login();
+                    }
+                });
+            };
+
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) {
+                    return;
+                }
+                js = d.createElement(s);
+                js.id = id;
+                js.src = "https://connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+          }
+      </script>
+    </div>
+  </body>
+</html>
