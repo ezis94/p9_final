@@ -23,11 +23,12 @@ var googleMapsClient = require('@google/maps').createClient({
     clientId: '897949743059-29ad8f8jb800tcr6snvp809bj8odglsu.apps.googleusercontent.com',
     clientSecret: 'yjMA6z7XJPDF3gseGEMAeTyT',
 });
-
+var Count_songs=5;
 var tempo_handle;
 var User;
 var Sessions = {};
 const path = require('path');
+const spawn = require("child_process").spawn;
 
 //ROLE STUFF-----------------------------------------------------------------------------------------
 
@@ -45,6 +46,8 @@ console.log(permission.attributes); // —> ['title']*/
 var qs = require('querystring');
 var express = require('express');
 var Demo = false;
+var Song_attr=[];
+var song_id=[];
 // init Spotify API wrapper
 
 var SpotifyWebApi = require('spotify-web-api-node');
@@ -228,7 +231,7 @@ router.get("/spotifyanalysis", function (req, res) {
                 //    result.forEach(function(element) {
 //var i=7
 
-                solver(element,1694);
+                solver(element,0);
                 //          });
 
 
@@ -240,7 +243,7 @@ router.get("/spotifyanalysis", function (req, res) {
 var solver_post = function(element,i) {
 
 
-    if(i<100) {
+    if(i<Count_songs) {
         var date = new Date().getTime();
         if (spotify_expire >= date) authenticate();
         console.log("hello");
@@ -261,10 +264,11 @@ var solver_post = function(element,i) {
                 console.log(data.segments.length);
                 (result => {
 
-                    console.log("result " + result);
+                    //console.log("result " + result);
 
-                    var out = fs.createWriteStream('C:\\Users\\Edgar\\WebstormProjects\\P9\\P9\\100_figs\\test_' + i + '.png')
+                    var out = fs.createWriteStream('C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs\\test_' + i + '.png')
                     var stream = draw(result).createPNGStream()
+
                     stream.pipe(out)
 
                     out.on('finish', () => {
@@ -278,7 +282,7 @@ var solver_post = function(element,i) {
             })
 
     }
-    else if(i==100){
+    else if(i==Count_songs){
         var date = new Date().getTime();
         if (spotify_expire >= date) authenticate();
         console.log("hello");
@@ -308,7 +312,7 @@ var solver_post = function(element,i) {
 
                     console.log("result " );
 
-                    var out = fs.createWriteStream('C:\\Users\\Edgar\\WebstormProjects\\P9\\P9\\100_figs\\seed.png')
+                    var out = fs.createWriteStream('C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs\\seed.png')
                     var stream = draw(result.slice(element.seek_time,element.end_time+1)).createPNGStream()
                     stream.pipe(out)
                    // console.log(result.length);
@@ -316,7 +320,8 @@ var solver_post = function(element,i) {
                         console.log('The PNG file was created.' + i);
                         i++;
                         //HERE WE CALL PYTHON!!!!!!!!!!-----------------------------------------------------------------------
-                        solver_post(element, i);
+                        //solver_post(element, i);
+                        pythonPower(element,0);
                     })
 
 
@@ -327,23 +332,78 @@ var solver_post = function(element,i) {
 }
 router.post("/spotifyanalysis", function(req, res) {
     console.log("I am in request "+req.body.seek_time + "," +req.body.end_time);
-    fs.readdir('C:\\Users\\Edgar\\WebstormProjects\\P9\\P9\\100_figs', (err, files) => {
-        if (err) throw err;
+    Demo=true;
+    if (Demo==false){
+        fs.readdir('C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs', (err, files) => {
+            if (err) throw err;
 
-        for (const file of files) {
-            fs.unlink(path.join('C:\\Users\\Edgar\\WebstormProjects\\P9\\P9\\100_figs', file), err => {
-                if (err) throw err;
-            });
-        }
-    });
-    if (Demo==false)
-    solver_post(req.body,0);
-    else {pythonPower();}
+            for (const file of files) {
+                fs.unlink(path.join('C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs', file), err => {
+                    if (err) throw err;
+                });
+            }
+        });
+        solver_post(req.body,0);
+    }
+    else {
+        pythonPower(req.body,0);
+    }
     res.send(JSON.stringify({stat: true}));
 
 });
-var pythonPower = function() {
-    console.log("finished")
+var pythonPower = function(song_element, i) {
+    // var process = spawn("python", ["C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\classify.py", "C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\fashion.model", 'C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs\\seed.png']);
+    //
+    // process.stdout.on('data',function(data){
+    //    console.log("pls print out" +data.toString());
+    // })
+    if(i<Count_songs){
+        cmd.get(
+
+            //------optional change---------------------------
+
+            'C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\venv\\Scripts\\python.exe C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\classify.py  C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\fashion.model "C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs\\test_' + i + '.png"',
+            function(err, data, stderr){
+                //console.log('what is our data  :',data)
+                var lines = data.split('\n');
+                // for(var i = 2;i < lines.length-1;i++){
+                //     //code here using lines[i] which will give you each line
+                //     console.log('what is our data  :' + lines[i]);
+                // }
+
+                //-----------optional change----------------
+
+                Song_attr.push([parseFloat(lines[2]) ,parseFloat(lines[3]),parseFloat(lines[4])]);
+                song_id.push( song_element.rec_songs[i]);
+                i++;
+                pythonPower(song_element,i);
+            }
+        );
+    }
+    else if (i==Count_songs){
+        cmd.get(
+
+            //------optional change---------------------------
+
+            'C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\venv\\Scripts\\python.exe C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\classify.py  C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\fashion.model "C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs\\seed.png"',
+            function(err, data, stderr){
+                //console.log('what is our data  :',data)
+                var lines = data.split('\n');
+                // for(var i = 2;i < lines.length-1;i++){
+                //     //code here using lines[i] which will give you each line
+                //     console.log('what is our data  :' + lines[i]);
+                // }
+
+                //-----------optional change----------------
+
+                Song_attr.push([parseFloat(lines[2]) ,parseFloat(lines[3]),parseFloat(lines[4])]);
+                song_id.push( song_element.seed_song);
+                //KNN------------------------------------------------------------ here
+            }
+        );
+    }
+    console.log(Song_attr);
+     console.log("finished python")
 }
 
 router.get("/playnewlistanalysis", function (request, response) {
