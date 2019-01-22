@@ -423,7 +423,7 @@ var pythonPower = function(song_element, i) {
                 console.log("ok"+seedSong);
 
                 var results=knn(seedSong, recomends, options);
-                console.log("These are results btw : "+ JSOM.stringify(results));
+                console.log("These are results btw : "+ JSON.stringify(results));
             }
         );
     }
