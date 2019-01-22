@@ -9,6 +9,7 @@ var request = require('request'); // "Request" library
 var GoogleTokenProvider = require('refresh-token').GoogleTokenProvider;
 var APP_ID = "https://localhost:4433";
 var SpotifyWebApi = require('spotify-web-api-node');
+var knn = require('alike');
 
 var fs = require("fs");
 var Users = {};
@@ -398,7 +399,31 @@ var pythonPower = function(song_element, i) {
 
                 Song_attr.push([parseFloat(lines[2]) ,parseFloat(lines[3]),parseFloat(lines[4])]);
                 song_id.push( song_element.seed_song);
+                var recomends = [];
+                for(var j =0;j<Count_songs;j++){
+                    recomends[j]={id:song_id[j], valence:Song_attr[j][0], depth:Song_attr[j][1], arousal:Song_attr[j][2]};
+                    console.log("pls"+recomends);
+                }
                 //KNN------------------------------------------------------------ here
+                var options = {
+                    k: 2,
+                    weights: {
+                        valence: 1.0/3.0,
+                        depth: 1.0/3.0,
+                        arousal: 1.0/3.0
+                    }
+                };
+
+                var seedSong = {
+                    id:song_id[Count_songs],
+                    valence:Song_attr[Count_songs][0],
+                    depth:Song_attr[Count_songs][1],
+                    arousal:Song_attr[Count_songs][2]
+                };
+                console.log("ok"+seedSong);
+
+                var results=knn(seedSong, recomends, options);
+                console.log("These are results btw : "+results);
             }
         );
     }
