@@ -24,7 +24,7 @@ var googleMapsClient = require('@google/maps').createClient({
     clientId: '897949743059-29ad8f8jb800tcr6snvp809bj8odglsu.apps.googleusercontent.com',
     clientSecret: 'yjMA6z7XJPDF3gseGEMAeTyT',
 });
-var Count_songs=5;
+var Count_songs=16;
 var tempo_handle;
 var User;
 var Sessions = {};
@@ -275,7 +275,7 @@ var solver_post = function(element,i,res) {
                     out.on('finish', () => {
                         console.log('The PNG file was created.' + i);
                         i++;
-                       return solver_post(element, i,res);
+                        solver_post(element, i,res);
                     })
 
 
@@ -322,7 +322,7 @@ var solver_post = function(element,i,res) {
                         i++;
                         //HERE WE CALL PYTHON!!!!!!!!!!-----------------------------------------------------------------------
                         //solver_post(element, i);
-                        return pythonPower(element,0,res);
+                        pythonPower(element,0,res);
                     })
 
 
@@ -369,7 +369,7 @@ var pythonPower = function(song_element, i,res) {
 
             //------optional change---------------------------
 
-            'C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\venv\\Scripts\\python.exe C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\classify.py  C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\fashion.model "C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs\\test_' + i + '.png"',
+            'C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\venv\\Scripts\\python.exe C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\classify.py',
             function(err, data, stderr){
                 //console.log('what is our data  :',data)
                 var lines = data.split('\n');
@@ -379,11 +379,58 @@ var pythonPower = function(song_element, i,res) {
                 // }
 
                 //-----------optional change----------------
+                for(var i = 2; i < lines.length-1; i++) { // i = 2 to outcomment [INFO] messages from Python script
+                    lines[i]=lines[i].replace("  "," ");
+                    lines[i]=lines[i].replace("   "," ");
+                    lines[i]=lines[i].replace("    "," ");
 
-                Song_attr.push([parseFloat(lines[2]) ,parseFloat(lines[3]),parseFloat(lines[4])]);
-                song_id.push( song_element.rec_songs[i]);
-                i++;
-                pythonPower(song_element,i);
+                    lines[i]=lines[i].replace(" ]","]");
+                    lines[i]=lines[i].substring(1,lines[i].length-2);
+
+                    var anylol = lines[i].split(" ");
+
+                    console.log(lines[i]);
+                    console.log(anylol[1]);
+                    Song_attr.push([parseFloat(anylol[0].replace(" ","")), parseFloat(anylol[1].replace(" ","")),parseFloat(anylol[2].replace(" ",""))]);
+                    if (i==2)
+                        song_id.push( song_element.seed_song);
+                    else
+                        song_id.push(song_element.rec_songs[i-2]);
+                }
+                // Song_attr.push([parseFloat(lines[2]) ,parseFloat(lines[3]),parseFloat(lines[4])]);
+                // song_id.push(song_element.rec_songs[i]);
+                // i++;
+                // pythonPower(song_element,i, res);
+
+                console.log(Song_attr);
+
+                var recomends = [];
+                for(var j =1;j<=Count_songs;j++){
+                    recomends[j-1]={id:song_id[j], valence:Song_attr[j][0], depth:Song_attr[j][1], arousal:Song_attr[j][2]};
+                   // console.log("pls"+recomends);
+                }
+                //KNN------------------------------------------------------------ here
+                var options = {
+                    k: 2
+
+                };
+
+                var seedSong = {
+                    //id:song_id[Count_songs],
+                    valence:Song_attr[0][0],
+                    depth:Song_attr[0][1],
+                    arousal:Song_attr[0][2]
+                };
+                console.log("ok"+seedSong);
+
+                var results=knn(seedSong, recomends, options);
+                console.log("These are results btw : "+ JSON.stringify(results));
+                res.send(JSON.stringify({results:  results}));
+
+
+
+               // pythonPower(song_element,Count_songs, res);
+
             }
         );
     }
@@ -457,7 +504,7 @@ var pythonPower = function(song_element, i,res) {
 return results;
     } */
     console.log(Song_attr);
-     console.log("finished python")
+    console.log("finished python")
 }
 
 router.get("/playnewlistanalysis", function (request, response) {
