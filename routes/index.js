@@ -241,7 +241,7 @@ router.get("/spotifyanalysis", function (req, res) {
     });
 });
 
-var solver_post = function(element,i) {
+var solver_post = function(element,i,res) {
 
 
     if(i<Count_songs) {
@@ -275,7 +275,7 @@ var solver_post = function(element,i) {
                     out.on('finish', () => {
                         console.log('The PNG file was created.' + i);
                         i++;
-                       return solver_post(element, i);
+                       return solver_post(element, i,res);
                     })
 
 
@@ -322,7 +322,7 @@ var solver_post = function(element,i) {
                         i++;
                         //HERE WE CALL PYTHON!!!!!!!!!!-----------------------------------------------------------------------
                         //solver_post(element, i);
-                        return pythonPower(element,0);
+                        return pythonPower(element,0,res);
                     })
 
 
@@ -332,6 +332,8 @@ var solver_post = function(element,i) {
 
 }
 router.post("/spotifyanalysis", function(req, res) {
+    Song_attr=[];
+    song_id=[];
     console.log("I am in request "+req.body.seek_time + "," +req.body.end_time);
     Demo=true;
     if (Demo==false){
@@ -344,19 +346,19 @@ router.post("/spotifyanalysis", function(req, res) {
                 });
             }
         });
-        res.send(JSON.stringify({results:  solver_post(req.body,0)}));
+        solver_post(req.body,0,res);
 
 
     }
     else {
 
-        res.send(JSON.stringify({results:  pythonPower(req.body,0)}));
+          pythonPower(req.body,0,res);
 
 
     }
 
 });
-var pythonPower = function(song_element, i) {
+var pythonPower = function(song_element, i,res) {
     // var process = spawn("python", ["C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\classify.py", "C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\fashion.model", 'C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs\\seed.png']);
     //
     // process.stdout.on('data',function(data){
@@ -424,7 +426,8 @@ var pythonPower = function(song_element, i) {
 
                 var results=knn(seedSong, recomends, options);
                 console.log("These are results btw : "+ JSON.stringify(results));
-                return results;
+                res.send(JSON.stringify({results:  results}));
+
             }
         );
     }
