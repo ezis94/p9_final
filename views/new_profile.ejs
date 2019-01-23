@@ -282,17 +282,17 @@ console.log(seekTime + "seek");
 
                                 console.log(data1);
 
-                                alert(data1.tracks[0]);
+                          //      alert(data1.tracks[0]);
                                 var send_array=[];
                                 for (var i = 0; i<data1.tracks.length;i++){
                                     send_array[i] = data1.tracks[i].id;
                                 }
-                                alert(send_array);
+                           //     alert(send_array);
                                 var sender = {rec_songs:send_array, seed_song:data.item.id, seek_time:newArrayLikes[0], end_time:newArrayLikes[1]};
                                 console.log("we start hehe" + JSON.stringify(sender));
                                 ajaxPost("/spotifyanalysis", sender, function(res) {
                                     //id=recommendations
-                                    alert(res);
+                               //     alert(res);
                                     res=JSON.parse(res);
                                     var myNode = document.getElementById("recommendations");
                                     while (myNode.firstChild) {
