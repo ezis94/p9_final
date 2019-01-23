@@ -275,7 +275,7 @@ var solver_post = function(element,i,res) {
                     out.on('finish', () => {
                         console.log('The PNG file was created.' + i);
                         i++;
-                       return solver_post(element, i,res);
+                        solver_post(element, i,res);
                     })
 
 
@@ -322,7 +322,7 @@ var solver_post = function(element,i,res) {
                         i++;
                         //HERE WE CALL PYTHON!!!!!!!!!!-----------------------------------------------------------------------
                         //solver_post(element, i);
-                        return pythonPower(element,0,res);
+                        pythonPower(element,0,res);
                     })
 
 
