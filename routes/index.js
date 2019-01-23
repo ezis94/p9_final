@@ -347,9 +347,11 @@ router.post("/spotifyanalysis", function(req, res) {
         solver_post(req.body,0);
     }
     else {
-        pythonPower(req.body,0);
+
+        res.send(JSON.stringify({results:  pythonPower(req.body,0)}));
+
+
     }
-    res.send(JSON.stringify({stat: true}));
 
 });
 var pythonPower = function(song_element, i) {
@@ -406,16 +408,12 @@ var pythonPower = function(song_element, i) {
                 }
                 //KNN------------------------------------------------------------ here
                 var options = {
-                    k: 2,
-                    weights: {
-                        valence: 1.0/3.0,
-                        depth: 1.0/3.0,
-                        arousal: 1.0/3.0
-                    }
+                    k: 2
+
                 };
 
                 var seedSong = {
-                    id:song_id[Count_songs],
+                    //id:song_id[Count_songs],
                     valence:Song_attr[Count_songs][0],
                     depth:Song_attr[Count_songs][1],
                     arousal:Song_attr[Count_songs][2]
@@ -424,9 +422,35 @@ var pythonPower = function(song_element, i) {
 
                 var results=knn(seedSong, recomends, options);
                 console.log("These are results btw : "+ JSON.stringify(results));
+                return results;
             }
         );
     }
+    /* debug code
+    else {
+        //KNN------------------------------------------------------------ here
+        var recomends = [ {id:"6666777674", valence:0.3437869, depth:0.2600239, arousal:0.39618927},
+            {id:"2MIffMNLanOcWNLVwbeUYE",valence:0.1700128, depth:0.07984439, arousal:0.75014275},
+            {id:"6op1lgxcCSNwzQvEFizPRS",valence:0.16052987, depth:0.18860374, arousal:0.6508664},
+            {id:"shjgkjgjhksa",valence:0.16343644, depth:0.1981395, arousal:0.63842404},
+            {id:"s432",valence:0.36749807, depth:0.17309053, arousal:0.45941135}];
+        var options = {
+            k: 2,
+
+        };
+
+        var seedSong = {
+            //id:"dsafas",
+            valence:0.16240801,
+            depth:0.12835155,
+            arousal:0.70924044
+        };
+        console.log("ok"+JSON.stringify(seedSong));
+
+        var results=knn(seedSong, recomends, options);
+        console.log("These are results btw : "+ JSON.stringify(results));
+return results;
+    } */
     console.log(Song_attr);
      console.log("finished python")
 }

@@ -17,16 +17,7 @@
     <h3 style="color:#0C1311">The Spotify playlist pool</h3>
     <div style="width: 100%;">
         <div id="spotify_list" style="width:50%; display: inline-block;"></div><div id="recommendations" style="width:50%; display: inline-block; border:2px solid black"><ul>
-                <li><a>Recommended song</a></li>
-                <li><a>Recommended song</a></li>
-                <li><a>Recommended song</a></li>
-                <li><a>Recommended song</a></li>
-                <li><a>Recommended song</a></li>
-                <li><a>Recommended song</a></li>
-                <li><a>Recommended song</a></li>
-                <li><a>Recommended song</a></li>
-                <li><a>Recommended song</a></li>
-                <li><a>Recommended song</a></li>
+
 
             </ul> </div></div>
     <br><br>
@@ -61,11 +52,7 @@
     </section>
 </main>
 
-<footer>
-    <a href="https://glitch.com/edit/#!/audio-features">
-        Remix this in Glitch
-    </a>
-</footer>
+
 <script src="https://sdk.scdn.co/spotify-player.js"></script>
 <script>
 
@@ -304,8 +291,46 @@ console.log(seekTime + "seek");
                                 var sender = {rec_songs:send_array, seed_song:data.item.id, seek_time:newArrayLikes[0], end_time:newArrayLikes[1]};
                                 console.log("we start hehe" + JSON.stringify(sender));
                                 ajaxPost("/spotifyanalysis", sender, function(res) {
-                                    res=JSON.parse(res);
+                                    //id=recommendations
                                     alert(res);
+                                    res=JSON.parse(res);
+                                    var myNode = document.getElementById("recommendations");
+                                    while (myNode.firstChild) {
+                                        myNode.removeChild(myNode.firstChild);
+                                    }
+                                    for (var i = 0; i<res.results.length;i++){
+                                        var recommendation = res.results[i];
+                                        console.log("Sending ajax " + recommendation.id);
+
+                                        $.ajax({
+                                            url: "https://api.spotify.com/v1/tracks/" + recommendation.id,
+
+                                            type: "GET",
+                                            contentType: "application/json",
+
+                                            headers: {
+                                                Accept: "application/json",
+                                                "Content-Type": "application/json",
+
+                                                Authorization: `Bearer ${accessToken}`
+                                            },
+
+
+                                            success: function(data) {
+                                                var node = document.createElement("li");
+                                                var link = document.createElement("a");
+                                                link.className = "rec_song";
+                                                link.id = data.id;
+                                                var textnode = document.createTextNode(data.name);
+                                                link.appendChild(textnode);
+                                                node.appendChild(link);
+                                                document.getElementById("recommendations").appendChild(node);
+                                            }
+                                        });
+
+                                    }
+
+
                                 });
 
                             }
@@ -493,6 +518,25 @@ console.log(seekTime + "seek");
                 },
 
                 data: '{"context_uri": "' + uri + '"}',
+                success: function(data) {}
+            });
+        });
+        $("#recommendations").on("click", ".rec_song", function() {
+            var uri = this.id;
+            console.log(uri);
+            $.ajax({
+                url: "https://api.spotify.com/v1/me/player/play?device_id=" + deviceId,
+
+                type: "PUT",
+                contentType: "application/json",
+
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${accessToken}`
+                },
+              //  data: '{"uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh", "spotify:track:1301WleyT98MSxVHPZCA6M"]}',
+               data: '{"uris": ["spotify:track:' + uri + '"]}',
                 success: function(data) {}
             });
         });
