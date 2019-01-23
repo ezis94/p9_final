@@ -24,7 +24,7 @@ var googleMapsClient = require('@google/maps').createClient({
     clientId: '897949743059-29ad8f8jb800tcr6snvp809bj8odglsu.apps.googleusercontent.com',
     clientSecret: 'yjMA6z7XJPDF3gseGEMAeTyT',
 });
-var Count_songs=16;
+var Count_songs=5;
 var tempo_handle;
 var User;
 var Sessions = {};
@@ -335,7 +335,7 @@ router.post("/spotifyanalysis", function(req, res) {
     Song_attr=[];
     song_id=[];
     console.log("I am in request "+req.body.seek_time + "," +req.body.end_time);
-    Demo=true;
+    // Demo=true;
     if (Demo==false){
         fs.readdir('C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs', (err, files) => {
             if (err) throw err;
@@ -380,9 +380,7 @@ var pythonPower = function(song_element, i,res) {
 
                 //-----------optional change----------------
                 for(var i = 2; i < lines.length-1; i++) { // i = 2 to outcomment [INFO] messages from Python script
-                    lines[i]=lines[i].replace("  "," ");
-                    lines[i]=lines[i].replace("   "," ");
-                    lines[i]=lines[i].replace("    "," ");
+                    lines[i]=lines[i].replace(/\s\s+/g, ' ');
 
                     lines[i]=lines[i].replace(" ]","]");
                     lines[i]=lines[i].substring(1,lines[i].length-2);
@@ -411,7 +409,7 @@ var pythonPower = function(song_element, i,res) {
                 }
                 //KNN------------------------------------------------------------ here
                 var options = {
-                    k: 2
+                    k: 3
 
                 };
 
@@ -434,50 +432,51 @@ var pythonPower = function(song_element, i,res) {
             }
         );
     }
-    else if (i==Count_songs){
-        cmd.get(
-
-            //------optional change---------------------------
-
-            'C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\venv\\Scripts\\python.exe C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\classify.py  C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\fashion.model "C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs\\seed.png"',
-            function(err, data, stderr){
-                //console.log('what is our data  :',data)
-                var lines = data.split('\n');
-                // for(var i = 2;i < lines.length-1;i++){
-                //     //code here using lines[i] which will give you each line
-                //     console.log('what is our data  :' + lines[i]);
-                // }
-
-                //-----------optional change----------------
-
-                Song_attr.push([parseFloat(lines[2]) ,parseFloat(lines[3]),parseFloat(lines[4])]);
-                song_id.push( song_element.seed_song);
-                var recomends = [];
-                for(var j =0;j<Count_songs;j++){
-                    recomends[j]={id:song_id[j], valence:Song_attr[j][0], depth:Song_attr[j][1], arousal:Song_attr[j][2]};
-                    console.log("pls"+recomends);
-                }
-                //KNN------------------------------------------------------------ here
-                var options = {
-                    k: 2
-
-                };
-
-                var seedSong = {
-                    //id:song_id[Count_songs],
-                    valence:Song_attr[Count_songs][0],
-                    depth:Song_attr[Count_songs][1],
-                    arousal:Song_attr[Count_songs][2]
-                };
-                console.log("ok"+seedSong);
-
-                var results=knn(seedSong, recomends, options);
-                console.log("These are results btw : "+ JSON.stringify(results));
-                res.send(JSON.stringify({results:  results}));
-
-            }
-        );
-    }
+    //Legacy code
+    // else if (i==Count_songs){
+    //     cmd.get(
+    //
+    //         //------optional change---------------------------
+    //
+    //         'C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\venv\\Scripts\\python.exe C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\classify.py  C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\fashion.model "C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs\\seed.png"',
+    //         function(err, data, stderr){
+    //             //console.log('what is our data  :',data)
+    //             var lines = data.split('\n');
+    //             // for(var i = 2;i < lines.length-1;i++){
+    //             //     //code here using lines[i] which will give you each line
+    //             //     console.log('what is our data  :' + lines[i]);
+    //             // }
+    //
+    //             //-----------optional change----------------
+    //
+    //             Song_attr.push([parseFloat(lines[2]) ,parseFloat(lines[3]),parseFloat(lines[4])]);
+    //             song_id.push( song_element.seed_song);
+    //             var recomends = [];
+    //             for(var j =0;j<Count_songs;j++){
+    //                 recomends[j]={id:song_id[j], valence:Song_attr[j][0], depth:Song_attr[j][1], arousal:Song_attr[j][2]};
+    //                 console.log("pls"+recomends);
+    //             }
+    //             //KNN------------------------------------------------------------ here
+    //             var options = {
+    //                 k: 2
+    //
+    //             };
+    //
+    //             var seedSong = {
+    //                 //id:song_id[Count_songs],
+    //                 valence:Song_attr[Count_songs][0],
+    //                 depth:Song_attr[Count_songs][1],
+    //                 arousal:Song_attr[Count_songs][2]
+    //             };
+    //             console.log("ok"+seedSong);
+    //
+    //             var results=knn(seedSong, recomends, options);
+    //             console.log("These are results btw : "+ JSON.stringify(results));
+    //             res.send(JSON.stringify({results:  results}));
+    //
+    //         }
+    //     );
+    // }
     /* debug code
     else {
         //KNN------------------------------------------------------------ here
