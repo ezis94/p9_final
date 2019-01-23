@@ -275,7 +275,7 @@ var solver_post = function(element,i) {
                     out.on('finish', () => {
                         console.log('The PNG file was created.' + i);
                         i++;
-                        solver_post(element, i);
+                       return solver_post(element, i);
                     })
 
 
@@ -322,7 +322,7 @@ var solver_post = function(element,i) {
                         i++;
                         //HERE WE CALL PYTHON!!!!!!!!!!-----------------------------------------------------------------------
                         //solver_post(element, i);
-                        pythonPower(element,0);
+                        return pythonPower(element,0);
                     })
 
 
@@ -344,7 +344,9 @@ router.post("/spotifyanalysis", function(req, res) {
                 });
             }
         });
-        solver_post(req.body,0);
+        res.send(JSON.stringify({results:  solver_post(req.body,0)}));
+
+
     }
     else {
 
