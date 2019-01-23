@@ -383,7 +383,7 @@ var pythonPower = function(song_element, i,res) {
                 Song_attr.push([parseFloat(lines[2]) ,parseFloat(lines[3]),parseFloat(lines[4])]);
                 song_id.push( song_element.rec_songs[i]);
                 i++;
-                pythonPower(song_element,i);
+                pythonPower(song_element,i,res);
             }
         );
     }
