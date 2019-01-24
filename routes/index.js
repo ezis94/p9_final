@@ -24,7 +24,7 @@ var googleMapsClient = require('@google/maps').createClient({
     clientId: '897949743059-29ad8f8jb800tcr6snvp809bj8odglsu.apps.googleusercontent.com',
     clientSecret: 'yjMA6z7XJPDF3gseGEMAeTyT',
 });
-var Count_songs=5;
+var Count_songs=10;
 var tempo_handle;
 var User;
 var Sessions = {};
@@ -267,7 +267,7 @@ var solver_post = function(element,i,res) {
 
                     //console.log("result " + result);
 
-                    var out = fs.createWriteStream('C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs\\test_' + i + '.png')
+                    var out = fs.createWriteStream('C:\\Users\\Edgar\\WebstormProjects\\p9_final\\p9_final\\100_figs\\test_' + i + '.png')
                     var stream = draw(result).createPNGStream()
 
                     stream.pipe(out)
@@ -313,7 +313,7 @@ var solver_post = function(element,i,res) {
 
                     console.log("result " );
 
-                    var out = fs.createWriteStream('C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs\\seed.png')
+                    var out = fs.createWriteStream('C:\\Users\\Edgar\\WebstormProjects\\p9_final\\p9_final\\100_figs\\seed.png')
                     var stream = draw(result.slice(element.seek_time,element.end_time+1)).createPNGStream()
                     stream.pipe(out)
                    // console.log(result.length);
@@ -337,11 +337,11 @@ router.post("/spotifyanalysis", function(req, res) {
     console.log("I am in request "+req.body.seek_time + "," +req.body.end_time);
     // Demo=true;
     if (Demo==false){
-        fs.readdir('C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs', (err, files) => {
+        fs.readdir('C:\\Users\\Edgar\\WebstormProjects\\p9_final\\p9_final\\100_figs', (err, files) => {
             if (err) throw err;
 
             for (const file of files) {
-                fs.unlink(path.join('C:\\Users\\dimix\\WebstormProjects\\p9_final\\100_figs', file), err => {
+                fs.unlink(path.join('C:\\Users\\Edgar\\WebstormProjects\\p9_final\\p9_final\\100_figs', file), err => {
                     if (err) throw err;
                 });
             }
@@ -369,7 +369,7 @@ var pythonPower = function(song_element, i,res) {
 
             //------optional change---------------------------
 
-            'C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\venv\\Scripts\\python.exe C:\\Users\\dimix\\PycharmProjects\\keras-multi-label\\classify.py',
+            'C:\\Users\\Edgar\\WebstormProjects\\P9-Keras\\venv\\Scripts\\python.exe C:\\Users\\Edgar\\WebstormProjects\\P9-Keras\\classify.py',
             function(err, data, stderr){
                 //console.log('what is our data  :',data)
                 var lines = data.split('\n');

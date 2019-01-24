@@ -235,12 +235,16 @@ console.log(seekTime + "seek");
                 }
 
                 var newArrayLikes= [];
-                for (var i=0; i<arrayLikes[3].length;i++){
-                    if((arrayLikes[3][i].start<=seekTime)&&(arrayLikes[3][i+1].start>=seekTime)){
-                        newArrayLikes[0]=i;
+                for (var i=0; i<arrayLikes[3].length;i++) {
+                    if ((arrayLikes[3][i].start < seekTime) && (arrayLikes[3][i + 1].start > seekTime)) {
+                        newArrayLikes[0] = i;
                     }
-                    else if((arrayLikes[3][i].start<=endtime)&&(arrayLikes[3][i+1].start>=endtime)){
-                        newArrayLikes[1]=i;
+                    else if((i + 1 == arrayLikes[3].length)&&(arrayLikes[3][i].start < endtime)) {
+                        newArrayLikes[1] = i;
+
+                    }
+                    else if ((arrayLikes[3][i].start < endtime) && (arrayLikes[3][i + 1].start > endtime)) {
+                        newArrayLikes[1] = i;
                     }
                 }
                 console.log("pitchstuff2: " + newArrayLikes);
@@ -396,44 +400,44 @@ console.log(seekTime + "seek");
         );
 
             // Pitch boxes
-            const pitchBoxWidth = 60;
-            ctx.strokeStyle = "#AAA";
-            pitchChanges.forEach((pitchChange, i) => {
-                ctx.fillStyle = `hsl(0, 0%, ${pitchChange * 100}%)`;
-            ctx.fillRect(
-                i * pitchBoxWidth,
-                height - 2 * pitchBoxWidth,
-                pitchBoxWidth,
-                pitchBoxWidth
-            );
-        });
-            timbreChanges.forEach((timbreChange, i) => {
-                ctx.fillStyle = `hsl(0, 0%, ${timbreChange * 100}%)`;
-            ctx.fillRect(
-                i * pitchBoxWidth,
-                height - 4 * pitchBoxWidth,
-                pitchBoxWidth,
-                pitchBoxWidth
-            );
-        });
-            currentAndLastArrayLikes[3][0].pitches.forEach((pitchChange, i) => {
-                ctx.fillStyle = `hsl(0, 0%, ${pitchChange * 100}%)`;
-            ctx.fillRect(
-                i * pitchBoxWidth,
-                height - pitchBoxWidth,
-                pitchBoxWidth,
-                pitchBoxWidth
-            );
-        });
-            currentAndLastArrayLikes[3][0].timbre.forEach((pitchChange, i) => {
-                ctx.fillStyle = `hsl(0, 0%, ${pitchChange * 100}%)`;
-            ctx.fillRect(
-                i * pitchBoxWidth,
-                height - 3 * pitchBoxWidth,
-                pitchBoxWidth,
-                pitchBoxWidth
-            );
-        });
+        //     const pitchBoxWidth = 60;
+        //     ctx.strokeStyle = "#AAA";
+        //     pitchChanges.forEach((pitchChange, i) => {
+        //         ctx.fillStyle = `hsl(0, 0%, ${pitchChange * 100}%)`;
+        //     ctx.fillRect(
+        //         i * pitchBoxWidth,
+        //         height - 2 * pitchBoxWidth,
+        //         pitchBoxWidth,
+        //         pitchBoxWidth
+        //     );
+        // });
+        //     timbreChanges.forEach((timbreChange, i) => {
+        //         ctx.fillStyle = `hsl(0, 0%, ${timbreChange * 100}%)`;
+        //     ctx.fillRect(
+        //         i * pitchBoxWidth,
+        //         height - 4 * pitchBoxWidth,
+        //         pitchBoxWidth,
+        //         pitchBoxWidth
+        //     );
+        // });
+        //     currentAndLastArrayLikes[3][0].pitches.forEach((pitchChange, i) => {
+        //         ctx.fillStyle = `hsl(0, 0%, ${pitchChange * 100}%)`;
+        //     ctx.fillRect(
+        //         i * pitchBoxWidth,
+        //         height - pitchBoxWidth,
+        //         pitchBoxWidth,
+        //         pitchBoxWidth
+        //     );
+        // });
+        //     currentAndLastArrayLikes[3][0].timbre.forEach((pitchChange, i) => {
+        //         ctx.fillStyle = `hsl(0, 0%, ${pitchChange * 100}%)`;
+        //     ctx.fillRect(
+        //         i * pitchBoxWidth,
+        //         height - 3 * pitchBoxWidth,
+        //         pitchBoxWidth,
+        //         pitchBoxWidth
+        //     );
+        // });
 
             window.requestAnimationFrame(provideAnimationFrame);
         })
